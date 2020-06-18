@@ -5,16 +5,14 @@ import {
     Route
 } from 'react-router-dom';
 
-import UploadHome from './components/UploadHome';
-
-import './App.css';
+import UploadHome from './main';
 
 function App() {
     return(
         <todoLayout>
             <Router>
                 <Switch>
-                    <Route path="/upload">
+                    <Route>
                         <UploadHome />
                     </Route>
                 </Switch>
