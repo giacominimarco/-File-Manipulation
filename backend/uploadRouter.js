@@ -2,6 +2,8 @@ const router = require('express').Router();
 const multer = require('multer');
 const fs = require('fs');
 const readline = require('readline');
+const { once } = require('events');//captura um determinado evento usando o pacote 'events'
+const { on } = require('process');
 
 // cria e armazena os arquivo enviados para 'upload_files/'
 // verifica se os arquivos em anexo estão no formato text/pllain e log;
@@ -17,20 +19,25 @@ const upload = multer({
 
 // tratamento do erro e envio do arquivo
 router.post('/', (req,res) => {
-    upload(req, res, (err) => {
+    upload(req, res, async (err) => { //acrescentado um async, caso contrario o await não funciona
         if(err) {
             console.log(err);
             res.send(422).send();
         }else {
             let file = req.file;
-            processFile(file);
+            const path = await processFile(file);
+            if (path){
+                res.download(path, file.originalname);
+            }else{
+                res.status(500).send();
+            }
             res.send();
         }
     });
 });
 
-
-function processFile(File) {
+//Transformei numa função async por causa do {once} linha 5
+async function processFile(File) {
     const outpath = `${process.env.OUTDIR}/${file.filename}`;
     const writeStream = fs.createWriteStream(outpath, {
         flags: 'a'
@@ -49,9 +56,15 @@ function processFile(File) {
     // imprime linha a linha o arquivo desofuscado
     readInterface.on('line', (line) => {
         writeStream.write(`${line.toUpperCase()}\n`)
-    })
+    });
 
-    // 1:34:00
+    readInterface.on('close', () => {
+        WriteStream.end();
+    });
+
+    await once(readInterface, 'close');
+
+    return outpath;
 
 }
 
