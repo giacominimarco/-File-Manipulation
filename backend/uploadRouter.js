@@ -30,7 +30,6 @@ router.post('/', (req,res) => {
             }else{
                 res.status(500).send();
             }
-            res.send();
         }
     });
 });

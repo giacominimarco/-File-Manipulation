@@ -9,7 +9,7 @@ import UploadHome from './main';
 
 function App() {
     return(
-        <todoLayout>
+        <>
             <Router>
                 <Switch>
                     <Route>
@@ -17,7 +17,7 @@ function App() {
                     </Route>
                 </Switch>
             </Router>
-        </todoLayout>
+        </>
     )
 }
 
