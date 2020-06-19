@@ -14,17 +14,17 @@ app.use(cors());
 app.use('/upload',uploadRouter);
 
 // verifica se o arquivo ou diretório já existem
-fs.access(process.env.OUTPUT, fs.constants.F_OK, (err) => {
+fs.access(process.env.OUTDIR, fs.constants.F_OK, (err) => {
     if(err) {
-        fs.mkdir(process.env.OUTPUT, (err) => {
+        fs.mkdir(process.env.OUTDIR, (err) => {
             if(err) throw err;
-            console.log(`${process.env.OUTPUT} criado com sucesso! `)
+            console.log(`${process.env.OUTDIR} criado com sucesso! `)
         })
     }else {
-        fs.stat(process.env.OUTPUT, (err, stats) => {
+        fs.stat(process.env.OUTDIR, (err, stats) => {
             if(err) throw err;
             if(!stats.isDirectory()) {
-                throw new Error(`${process.env.OUTPUT} existe e não é um diretório`)
+                throw new Error(`${process.env.OUTDIR} existe e não é um diretório`)
             }
         });
     }
