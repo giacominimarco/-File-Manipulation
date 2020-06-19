@@ -1,0 +1,5 @@
+select * from contrato where ctr_numero =1638607 
+
+select * from VENCIMENTOCONTRATO where VCT_CTR_TidContrato =
+
+delete vencimentocontrato where VCT_CTR_TidContrato =75883

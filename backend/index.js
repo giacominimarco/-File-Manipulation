@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(cors());
 app.use('/upload',uploadRouter);
 
-// verifica se o arquivo ou diretório já existem
+// Cria um diretório aonde será armazenado os arquivos de
 fs.access(process.env.OUTDIR, fs.constants.F_OK, (err) => {
     if(err) {
         fs.mkdir(process.env.OUTDIR, (err) => {
@@ -28,6 +28,6 @@ fs.access(process.env.OUTDIR, fs.constants.F_OK, (err) => {
             }
         });
     }
-})
+});
 
 app.listen(port, () => console.log('Servidor Ligado'))

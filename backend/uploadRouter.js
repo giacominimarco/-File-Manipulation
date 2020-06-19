@@ -3,10 +3,8 @@ const multer = require('multer');
 const fs = require('fs');
 const readline = require('readline');
 const { once } = require('events');//captura um determinado evento usando o pacote 'events'
-const { on } = require('process');
 
-// cria e armazena os arquivo enviados para 'upload_files/'
-// verifica se os arquivos em anexo estão no formato text/pllain e log;
+// Restrição de arquivos'
 const upload = multer({
     dest: 'upload_files/',
     fileFilter: (req, file, cb) => {
@@ -17,16 +15,17 @@ const upload = multer({
     }
 }).single('attachment');
 
-// tratamento do erro e envio do arquivo
+// processamento do arquivo
 router.post('/', (req,res) => {
     upload(req, res, async (err) => { //acrescentado um async, caso contrario o await não funciona
-        if(err) {
+        if(err) { // se der erro
             console.log(err);
-            res.send(422).send();
-        }else {
+            res.status(422).send();
+        }else { // se der certo
             let file = req.file;
             const path = await processFile(file);
             if (path){
+                // para o usuário receber o arquivo desofuscado
                 res.download(path, file.originalname);
             }else{
                 res.status(500).send();
@@ -37,8 +36,10 @@ router.post('/', (req,res) => {
 });
 
 //Transformei numa função async por causa do {once} linha 5
-async function processFile(File) {
+async function processFile(file) {
     const outpath = `${process.env.OUTDIR}/${file.filename}`;
+
+    // Escreve linha a linha 
     const writeStream = fs.createWriteStream(outpath, {
         flags: 'a'
     });
@@ -54,14 +55,17 @@ async function processFile(File) {
     });
 
     // imprime linha a linha o arquivo desofuscado
+    // aqui que será feito o desofuscamento
     readInterface.on('line', (line) => {
         writeStream.write(`${line.toUpperCase()}\n`)
     });
 
+    // fecha apos leitura do arquivo
     readInterface.on('close', () => {
-        WriteStream.end();
+        writeStream.end();
     });
 
+    // aguarda ler todo o arquivo antes de fechar
     await once(readInterface, 'close');
 
     return outpath;
